@@ -1,0 +1,15 @@
+<settings>
+  <servers>
+    <server>
+      <id>artifact-registry-https</id>
+      <configuration>
+        <httpHeaders>
+          <property>
+            <name>Authorization</name>
+            <value>Bearer ${env.GOOGLE_OAUTH_ACCESS_TOKEN}</value> 
+          </property>
+        </httpHeaders>
+      </configuration>
+    </server>
+  </servers>
+</settings>

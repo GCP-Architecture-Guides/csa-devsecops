@@ -1,0 +1,66 @@
+substitutions:
+  _ORGANIZATION_ID: "<ORG_ID>"
+  _BILLING_ACCOUNT: "<BILLING_ACCOUNT_ID>"
+  _END_USER_ACCCOUNT: "<END_USER_EMAIL_ADDRESS>"
+  _TEST_PROJECT_NAME: "<TEST_PROJECT_NAME>"
+  _TEST_FOLDER_NAME: "<TEST_PROJECT_FOLDER>"
+
+steps:
+- id: 'tf init'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: 'sh'
+  args:
+  - '-ex'
+  - '-c'
+  - |
+    terraform init
+
+- id: 'tf plan'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: 'sh'
+  args:
+  - '-ex'
+  - '-c'
+  - |
+    export TF_VAR_organization_id="${_ORGANIZATION_ID}"
+    export TF_VAR_billing_account="${_BILLING_ACCOUNT}"
+    export TF_VAR_end_user_account="user:${_END_USER_ACCCOUNT}"
+    export TF_VAR_project_name="${_TEST_PROJECT_NAME}"
+    export TF_VAR_folder_name="${_TEST_FOLDER_NAME}"
+    terraform plan
+
+- id: 'tf apply'
+  name: 'gcr.io/google.com/cloudsdktool/google-cloud-cli'
+  entrypoint: 'sh'
+  args:
+  - '-ex'
+  - '-c'
+  - |
+    apt-get install netcat jq gettext-base procps unzip -q -y
+
+    curl https://releases.hashicorp.com/terraform/1.6.3/terraform_1.6.3_linux_amd64.zip > terraform_1.6.3_linux_amd64.zip
+    unzip terraform_1.6.3_linux_amd64.zip
+    mv terraform /usr/bin
+
+    export TF_VAR_organization_id="${_ORGANIZATION_ID}"
+    export TF_VAR_billing_account="${_BILLING_ACCOUNT}"
+    export TF_VAR_end_user_account="user:${_END_USER_ACCCOUNT}"
+    export TF_VAR_project_name="${_TEST_PROJECT_NAME}"
+    export TF_VAR_folder_name="${_TEST_FOLDER_NAME}"
+    terraform apply -auto-approve
+
+- id: 'tf destroy'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: 'sh'
+  args:
+  - '-ex'
+  - '-c'
+  - |
+    export TF_VAR_organization_id="${_ORGANIZATION_ID}"
+    export TF_VAR_billing_account="${_BILLING_ACCOUNT}"
+    export TF_VAR_end_user_account="user:${_END_USER_ACCCOUNT}"
+    export TF_VAR_project_name="${_TEST_PROJECT_NAME}"
+    export TF_VAR_folder_name="${_TEST_FOLDER_NAME}"
+    terraform destroy -auto-approve
+
+

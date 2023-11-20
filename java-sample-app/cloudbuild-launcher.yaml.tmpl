@@ -1,0 +1,46 @@
+substitutions:
+  _DOCKER_REPO_NAME: "$DOCKER_REPO_NAME"
+  _DOCKER_REPO_URL: "${LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_DOCKER_REPO_NAME}"
+  _SKAFFOLD_VERSION: "v2.6.0"
+  _SKAFFOLD_URL: "https://storage.googleapis.com/skaffold/releases/${_SKAFFOLD_VERSION}/skaffold-linux-amd64"
+  _PRIVATE_WORKER_POOL: "$PRIVATE_WORKER_POOL"
+  _WORKER_SERVICE_ACCOUNT: "$SERVICE_ACCOUNT"
+
+steps:
+- id: 'launch-build'
+  name: gcr.io/cloud-builders/gcloud
+  entrypoint: bash
+  args:
+  - '-eo'
+  - 'pipefail'
+  - '-c'
+  - >
+    curl -Lo "/tmp/skaffold" '${_SKAFFOLD_URL}' &&
+    install /tmp/skaffold /usr/bin &&
+    skaffold build --dry-run -q &&
+    ARTIFACT_TAGS="$(skaffold build --dry-run -q | grep --color=never -oP '(?<="tag":")[^"]*' | tr '\n' '|' | sed -e 's/|$//g')" &&
+    IFS='|' read -r -a ARTIFACT_TAGS_ARRAY <<< "$${ARTIFACT_TAGS}" &&
+    cp cloudbuild.yaml /tmp/cloudbuild-rendered.yaml &&
+    sed -z -E "s/(images\:[^-]*).*\"/\1/g" -i /tmp/cloudbuild-rendered.yaml &&
+
+    for ARTIFACT_TAG in "$${ARTIFACT_TAGS_ARRAY[@]}"; do
+
+    IMAGE="${_DOCKER_REPO_URL}/$${ARTIFACT_TAG}" &&
+    IMAGE_ESCAPED=$(echo "$${IMAGE}" | sed -E 's/\//\\\//g') &&
+    sed -E "s/(images\:)/\1\n- $${IMAGE_ESCAPED}/g" -i /tmp/cloudbuild-rendered.yaml
+
+    done &&
+
+    gcloud builds submit "${_REPO_URL}" 
+    --git-source-revision=${COMMIT_SHA}
+    --substitutions=_ARTIFACT_TAGS="$${ARTIFACT_TAGS}"
+    --region=${LOCATION}
+    --config=/tmp/cloudbuild-rendered.yaml
+    --async
+
+options:
+  dynamic_substitutions: true
+  logging: CLOUD_LOGGING_ONLY
+  pool:
+    name: 'projects/${PROJECT_ID}/locations/${LOCATION}/workerPools/${_PRIVATE_WORKER_POOL}'
+

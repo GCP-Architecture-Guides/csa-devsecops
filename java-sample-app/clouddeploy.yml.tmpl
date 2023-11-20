@@ -1,0 +1,25 @@
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+  name: $DELIVERY_PIPELINE_NAME
+description: main application pipeline
+serialPipeline:
+  stages:
+  - targetId: staging
+    profiles: [staging]
+---
+
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: staging
+description: staging cluster
+gke:
+  cluster: projects/$PROJECT_ID/locations/$REGION/clusters/$GKE_CLUSTER_NAME
+executionConfigs:
+- usages:
+  - DEPLOY
+  workerPool: "projects/$PROJECT_ID/locations/$REGION/workerPools/$PRIVATE_WORKER_POOL"
+- usages:
+  - RENDER
+  - VERIFY

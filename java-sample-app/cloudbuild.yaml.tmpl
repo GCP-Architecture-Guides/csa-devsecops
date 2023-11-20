@@ -1,0 +1,190 @@
+# This file cannot be submitted to a Cloud Build directly, due to requirements for a dynamic images configuration below.
+# The cloudbuild-launcher.yaml is designed to be the entry point configuration and will launch a seperate job using this file's configuration after dynamically populating the images configuration below.
+# All Cloud Build submit commands and triggers must reference 'cloudbuild-launcher.yaml' instead of this file.
+substitutions:
+  _ARTIFACT_TAGS: "<provided at build submit time>"
+  _DELIVERY_PIPELINE_NAME: "$DELIVERY_PIPELINE_NAME"
+  _DOCKER_REPO_NAME: "$DOCKER_REPO_NAME"
+  _DOCKER_REPO_URL: "${LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_DOCKER_REPO_NAME}"
+  _PRIVATE_WORKER_POOL: "$PRIVATE_WORKER_POOL"
+  _ATTESTOR_NAME: "$ATTESTOR_NAME"
+  _KMS_KEYRING_NAME: "$KMS_KEYRING_NAME"
+  _KMS_KEY_NAME: "$KMS_KEY_NAME"
+  _KMS_KEY_VERSION: "$KMS_KEY_VERSION"
+  _MVN_VERSION: "3.8.7"
+  _SKAFFOLD_VERSION: "v2.6.0"
+  _MVN_URL: "https://us-maven.pkg.dev/cloud-aoss/java/org/apache/maven/apache-maven/${_MVN_VERSION}/apache-maven-${_MVN_VERSION}-bin.zip"
+  _SKAFFOLD_URL: "https://storage.googleapis.com/skaffold/releases/${_SKAFFOLD_VERSION}/skaffold-linux-amd64"
+  _TOKEN_URL: "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token"
+  _WORKER_SERVICE_ACCOUNT: "$SERVICE_ACCOUNT"
+
+steps:
+- # Copy the Docker client binary out of the Docker container to allow
+  # the mvn builder in the next step to use it to build containers.
+  id: 'docker-shim'
+  name: gcr.io/cloud-builders/docker
+  entrypoint: bash
+  args:
+  - '-eo'
+  - 'pipefail'
+  - '-c'
+  - >
+    cp /bin/docker /workspace/docker
+
+- # Build the container with Skaffold using the Docker client.
+  id: 'build'
+  name: gcr.io/cloud-builders/mvn
+  entrypoint: bash
+  args:
+  - '-eo'
+  - 'pipefail'
+  - '-c'
+  - >
+    export GOOGLE_OAUTH_ACCESS_TOKEN="$(curl -sf ${_TOKEN_URL} -H 'Metadata-Flavor:Google' |  sed -E 's/.*"access_token":"?([^,"]*)"?.*/\1/')" &&
+    export M2_HOME="/opt/apache-maven/apache-maven-${_MVN_VERSION}" &&
+    export MAVEN_CONFIG="" &&
+    AUTHORIZATION_HEADER="Authorization: Bearer $${GOOGLE_OAUTH_ACCESS_TOKEN}" &&
+    mkdir -p /opt/apache-maven /root/.m2 /tmp/bin &&
+    mv /workspace/docker /usr/bin &&
+    cp /workspace/config/maven_settings.xml /root/.m2/settings.xml &&
+    (curl -sfL -o "$${M2_HOME}.zip" -H "$$AUTHORIZATION_HEADER" '${_MVN_URL}' ||
+    echo "FAILURE: Could not fetch Maven from Assured OSS repository at URL: ${_MVN_URL}") &&
+    curl -sfL -o "/tmp/skaffold" '${_SKAFFOLD_URL}' &&
+    install /tmp/skaffold /usr/bin &&
+    skaffold build
+    --interactive=false
+    --file-output=/workspace/artifacts.json
+    --cache-artifacts=false
+    --filename=skaffold.yaml
+    --profile=staging
+    --default-repo=${_DOCKER_REPO_URL}
+
+- # Re-tag Docker image with proper tags, push the container,
+  # and update /workspace/artifacts.json with real container sha and tags.
+  id: 'push-containers'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: bash
+  args:
+  - '-eo'
+  - 'pipefail'
+  - '-c'
+  - >
+    cat /workspace/artifacts.json &&
+    IFS='|' read -r -a ARTIFACT_TAGS_ARRAY <<< '$_ARTIFACT_TAGS' &&
+    for ARTIFACT_TAG in "${ARTIFACT_TAGS_ARRAY[@]}"; do
+
+    IMAGE_NAME=$(echo $${ARTIFACT_TAG} | cut -d : -f 1) &&
+    IMG_URL="${_DOCKER_REPO_URL}/$${ARTIFACT_TAG}" &&
+    IMAGE_SHA_DOCKER=$(docker push $$IMG_URL | tail -1 | sed -E 's/.*digest: ([^ ]*)?.*/\1/g') &&
+    sed -E "s/(\"tag\":\".*)$${IMAGE_NAME}[^\"]*(.*)/\1$${ARTIFACT_TAG}@$${IMAGE_SHA_DOCKER}\2/g" -i /workspace/artifacts.json
+
+    done &&
+    cat /workspace/artifacts.json | grep --color=never -oP '(?<=\"tag\":\")[^\"]*' > /workspace/image_uris.txt
+
+- # Scan the container and validate that there or no HIGH or CRITICAL vulnerabilities
+  id: 'scan-vulnerabilities'
+  name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  entrypoint: bash
+  args:
+  - '-eo'
+  - 'pipefail'
+  - '-c'
+  - >
+    COUNT=0 &&
+    FOUND_VULNERABILITIES="false" &&
+    while read ARTIFACT_TAG; do
+    
+    SCAN_URI=$(gcloud artifacts docker images scan $$ARTIFACT_TAG
+    --remote
+    --additional-package-types "GO,MAVEN"
+    --format "value(response.scan)") &&
+    VULNERABILITIES_RESULTS=$(gcloud artifacts docker images list-vulnerabilities $$SCAN_URI --format="value(vulnerability.effectiveSeverity)" | uniq) &&
+    SEVERE_VULNERABILITIES=$(echo $$VULNERABILITIES_RESULTS | grep -e "HIGH" -e "CRITICAL" || true) &&
+    if [ -n "$$SEVERE_VULNERABILITIES" ]; then
+      echo "Error: Found HIGH or CRITICAL vulnerabilities in scan: $$SCAN_URI" &&
+      echo "For more information run: gcloud artifacts docker images list-vulnerabilities $$SCAN_URI" &&
+      FOUND_VULNERABILITIES="true"
+    else
+      echo "Success: No HIGH or CRITICAL vulnerabilities were found in scan: $$SCAN_URI"
+    fi
+
+    done < "/workspace/image_uris.txt" &&
+
+    if [ "$${FOUND_VULNERABILITIES}" = "true" ]; then
+      echo "Failure: See Vulnerability Scanning Results" &&
+      if [[ "${_FAIL_ON_VULNERABILITY}" = "true" ]]; then
+        exit 1
+      fi
+    fi
+
+- # Create the attestation
+  id: 'attest-containers'
+  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: bash
+  args:
+  - '-eo'
+  - 'pipefail'
+  - '-c'
+  - >
+    while read ARTIFACT_TAG; do
+
+    IMAGE_URI_NO_TAG=$(echo $$ARTIFACT_TAG | sed -E "s/(.*)\:.*(@.*)/\1\2/") &&
+    echo "Attesting image uri: $${IMAGE_URI_NO_TAG}" &&
+    EXISTING_ATTESTATION=$(gcloud beta container binauthz attestations list
+    --attestor-project ${PROJECT_ID}
+    --attestor ${_ATTESTOR_NAME}
+    --format json | grep "$$IMAGE_URI_NO_TAG" || true) &&
+    if [ -z "$${EXISTING_ATTESTATION}" ]; then
+      
+    gcloud beta container binauthz attestations sign-and-create
+    --project="${PROJECT_ID}"
+    --artifact-url="$$IMAGE_URI_NO_TAG"
+    --attestor="${_ATTESTOR_NAME}"
+    --attestor-project="${PROJECT_ID}"
+    --keyversion-project="${PROJECT_ID}"
+    --keyversion-location=""${LOCATION}""
+    --keyversion-keyring="${_KMS_KEYRING_NAME}"
+    --keyversion-key="${_KMS_KEY_NAME}"
+    --keyversion="${_KMS_KEY_VERSION}"
+    --quiet
+    
+    else
+      echo "Attestation already found for container: $${IMAGE_URI_NO_TAG}"
+    fi
+
+    done < "/workspace/image_uris.txt"
+
+- # Create Cloud Deploy Release for Continuous Deployment
+  id: 'release'
+  name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  entrypoint: bash
+  args:
+  - '-eo'
+  - 'pipefail'
+  - '-c'
+  - >
+    SHORT_BUILD_ID=$(echo ${BUILD_ID} | cut -d- -f1) &&
+    gcloud beta deploy releases create
+    release-$${SHORT_BUILD_ID}
+    --delivery-pipeline "${_DELIVERY_PIPELINE_NAME}"
+    --description "Release demo"
+    --region "${LOCATION}"
+    --skaffold-file "/workspace/skaffold.yaml"
+    --annotations="release-id=rel-$${SHORT_BUILD_ID}"
+    --build-artifacts="/workspace/artifacts.json"
+    --project $PROJECT_ID
+
+# Do not change. 'images\:' configuration managed by cloudbuild-launcher.yaml
+images:
+- "<provided at build submit time>"
+
+serviceAccount: 'projects/${PROJECT_ID}/serviceAccounts/${_WORKER_SERVICE_ACCOUNT}'
+
+options:
+  dynamic_substitutions: true
+  logging: CLOUD_LOGGING_ONLY
+  pool:
+    name: 'projects/${PROJECT_ID}/locations/${LOCATION}/workerPools/${_PRIVATE_WORKER_POOL}'
+  requestedVerifyOption: VERIFIED
+  substitutionOption: 'ALLOW_LOOSE'
+

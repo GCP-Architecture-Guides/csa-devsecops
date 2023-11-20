@@ -1,0 +1,45 @@
+apiVersion: skaffold/v4beta6
+kind: Config
+build:
+  artifacts:
+    - image: spring-java-hello-world
+      jib: {}
+deploy:
+  kubectl: {}
+manifests:
+  rawYaml:
+    - kubernetes/deployment.yml
+
+profiles:
+  - name: dev
+    # automatically activate this profile when current context is "minikube"
+    activation:
+      - kubeContext: minikube
+    build:
+      local:
+        push: false
+      # Generated artifact
+      artifacts:
+        - image: spring-java-hello-world
+          jib: {}
+    manifests:
+      rawYaml:
+        - kubernetes/deployment.yml
+    portForward:
+      - resourceType: service
+        resourceName: spring-java-hello-world-service
+        port: 8080
+        localPort: 9000
+
+  - name: staging
+    build:
+      local:
+        push: false
+      artifacts:
+        - image: spring-java-hello-world
+          jib: {}
+    manifests:
+      rawYaml:
+        - kubernetes/gke-deployment.yml
+    deploy:
+      kubectl: {}
