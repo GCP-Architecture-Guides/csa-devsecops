@@ -6,28 +6,28 @@ This demo code is not built for production workload
 # Architecture and guide for secure cloud native development on GCP
 
 # Summary
-This project presents a Secure DevOps Architecture Pattern for cloud-native development on Google Cloud. It's designed as a non-production, demonstration environment, automated with Terraform for streamlined setup. The architecture integrates key tools like Skaffold, Jib, and Minikube within a Cloud Workstation, and services like Cloud Build, Cloud Deploy, and GKE, within a secure framework of private networking and strict IAM policies. Aimed at enhancing both the inner and outer development loops, the project provides a balanced approach to rapid development and stringent security, ensuring alignment with enterprise compliance standards. The project provides a functional 'Hello World' application using Java, Spring Boot, and Maven.
+This project presents a Secure DevOps Architecture Pattern for cloud-native development on Google Cloud. It's designed as a non-production, demonstration environment, automated with Terraform for streamlined setup. The architecture integrates key tools like Skaffold, Jib, and Minikube within a Cloud Workstation, and services like Cloud Build, Cloud Deploy, and GKE, within a secure framework of private networking and strict IAM policies. Aimed at enhancing both the inner and outer development loops, the project provides a balanced approach to rapid development and stringent security, ensuring alignment with enterprise compliance standards. The project provides a functional 'Hello World' application using Java, Spring Boot, and Maven. 
 
-Note: While the included sample application uses Java and Maven, it is entirely possible to reuse the infrastructure to deploy an alternative technology stack of your choosing. However, please keep in mind that you will need to either provide access to your application packages and runtime dependences through the VPCs or enable egress to the public Internet (e.g. via NAT Gateways).
+Note: While the included sample application uses Java and Maven, it is entirely possible to reuse the infrastructure to deploy an alternative technology stack of your choosing. However, please keep in mind that you will need to either provide access to your application packages and runtime dependences through the VPCs or enable egress to the public Internet (e.g. via NAT Gateways).   
 
 # Architecture
 
 ## Design Diagrams
-<img alt="Infra Arch" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/7edee343-d6d4-4de3-a462-6b457e30478c" width="900" />
+<img alt="Infra Arch" src="https://github.com/mgaur10/appmod-temp/assets/38972/7edee343-d6d4-4de3-a462-6b457e30478c" width="900" />
 
 ## Product and services
-This demo uses Terraform to setup the Secure DevOps Architecture in a single folder and single project. The underlying infrastructure uses Google Cloud services like
+This demo uses Terraform to setup the Secure DevOps Architecture in a single folder and single project. The underlying infrastructure uses Google Cloud services like  
 * [Artifact Registry](https://cloud.google.com/artifact-registry)
 * [Assured Open Source Software](https://cloud.google.com/assured-open-source-software)
 * [Binary Authorization](https://cloud.google.com/binary-authorization)
-* [Cloud Build](https://cloud.google.com/build), [Cloud Deploy](https://cloud.google.com/deploy)
+* [Cloud Build](https://cloud.google.com/build), [Cloud Deploy](https://cloud.google.com/deploy) 
 * [Cloud Key Management](https://cloud.google.com/kms)
 * [Compute Engine](https://cloud.google.com/compute)
 * [GKE](https://cloud.google.com/containers)
 * [Cloud DNS](https://cloud.google.com/dns)
 * [Cloud Logging](https://cloud.google.com/logging)
 * [Storage](https://cloud.google.com/storage)
-* [Cloud Workstations](https://cloud.google.com/workstations).
+* [Cloud Workstations](https://cloud.google.com/workstations). 
 
 ## Design Considerations
 his architecture demonstrates a secure Google Cloud-native development environment, catering to roles intersecting software engineering, security, DevOps, and DevSecOps. The automated setup facilitates immediate Java application development with Spring Boot and Maven, leveraging Google Cloud-hosted resources, without requiring Internet access. It emphasizes a streamlined development process with minimal initial setup and ongoing security enhancements, focusing on the following aspects:
@@ -42,14 +42,14 @@ Outer Development Loop experience for developers:
 1) There should be minimal to no regular Developer work required on the CI/CD process to deliver their application to the remote deployment environment.
 2) The Outer Development Loop scripts and configuration should be readily accessible and modifiable by developers.
 3) The remote target runtime environment (i.e. GKE) should only allow deployment of artifacts generated through the defined Outer Development Loop process.
-4) The generated artifacts should be scanned for vulnerabilities, and only deployed if the warnings are classified as ‘’Medium” or below.
-5) A developer should be able to introduce additional container artifacts through their build configuration and deploy them without changes to their build pipeline.
+4) The generated artifacts should be scanned for vulnerabilities, and only deployed if the warnings are classified as ‘’Medium” or below. 
+5) A developer should be able to introduce additional container artifacts through their build configuration and deploy them without changes to their build pipeline. 
 
 
 # How to Deploy
 The following steps should be executed in Cloud Shell in the Google Cloud Console.
 
-### 1. IAM Permission
+### 1. IAM Permission 
 Grant the user running the Terraform below roles on your Oraganization. The user may be your end user account.
 
 ```
@@ -60,14 +60,14 @@ Organization Policy Administrator
 Project Creator
 ```
 
-<img alt="Required IAM Organization Policies" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/4f2cbcd2-47e1-4742-8400-16672c54836a" width="600"/>
+<img alt="Required IAM Organization Policies" src="https://github.com/mgaur10/appmod-temp/assets/38972/4f2cbcd2-47e1-4742-8400-16672c54836a" width="600"/>
 
 ### 2. Get the code
 Clone the GitHub repository and navigate to the root of the repository.
 
 ```BASH
-git clone https://github.com/GCP-Architecture-Guides/csa-devsecops.git
-cd csa-devsecops
+git clone https://github.com/GCP-Architecture-Guides/CSA-App-Dev.git
+cd CSA-App-Dev
 ```
 
 ### 3. Deploy the infrastructure using Terraform
@@ -76,18 +76,18 @@ You will need to configure your preferred Organization ID, Billing Account ID, a
 
 To find your Organization ID, you may use the Cloud Console to open the project selector and copy your Organization ID:
 
-<img alt="Organization ID in GUI" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/f729e791-5777-4614-85e2-2b5e38fe2c3c" width="600"/>
+<img alt="Organization ID in GUI" src="https://github.com/mgaur10/appmod-temp/assets/38972/f729e791-5777-4614-85e2-2b5e38fe2c3c" width="600"/>
 
 To find your Billing Account ID, you may use the Cloud Console to navigate to the "Billing Acccounts" page and copy your Billing ID:
 
-<img alt="Billing ID in GUI" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/df294c6b-ab98-4056-b492-7c5bc10dd2f9" width="600"/>
+<img alt="Billing ID in GUI" src="https://github.com/mgaur10/appmod-temp/assets/38972/df294c6b-ab98-4056-b492-7c5bc10dd2f9" width="600"/>
 
 From the root folder of this repo, run the following commands to configure Terraform:
 
 ```BASH
 export TF_VAR_organization_id="YOUR_ORGANIZATION_ID"
 export TF_VAR_billing_account="YOUR_BILLING_ID"
-# NOTE: make sure to keep the 'user:' prefix before the email address
+# NOTE: make sure to keep the 'user:' prefix before the email address 
 export TF_VAR_end_user_account="user:USERNAME@DOMAIN.com"
 ```
 
@@ -101,7 +101,7 @@ export TF_VAR_workstation_image="us-central1-docker.pkg.dev/cloud-workstations-i
 **Note:** All other variables are set to default values. To modify these, you can adjust them in the variable.tf file.
 
 
-Init and Apply The Terraform project (~25 minutes to complete)
+Init and Apply The Terraform project (~25 minutes to complete) 
 ```BASH
 gcloud config unset project
 terraform init
@@ -119,18 +119,18 @@ terraform apply --refresh-only
 
 #### Use your Workstation
 1. Open a Web Browser and navigate to the [Cloud Workstations page](https://console.cloud.google.com/workstations/list) through a web browser and select your new project.
-   * <img alt="Select Your New Project" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/ee3e2047-bc4d-4a67-9a54-2f959c5dc0dc" width="600" />
+   * <img alt="Select Your New Project" src="https://github.com/mgaur10/appmod-temp/assets/38972/ee3e2047-bc4d-4a67-9a54-2f959c5dc0dc" width="600" />
 2. Navigate to you Cloud Workstation (named 'hello-world-worksation' by default) and click the 'Launch' button. Note: If you see the 'Start' button instead of 'Launch', click the 'Start' button and then click the 'Launch' button once it becomes available.
-    * <img alt="Workstation File Menu GUI" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/61aac3fa-f492-41e0-82f8-91d4e4b4b79c" width=300>
+    * <img alt="Workstation File Menu GUI" src="https://github.com/mgaur10/appmod-temp/assets/38972/61aac3fa-f492-41e0-82f8-91d4e4b4b79c" width=300>
 
 3. You should now be in a new browser tab viewing your 'Code OSS' IDE.
-    * <img alt="Code OSS IDE" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/e65eab05-9642-4b74-890b-0ad6daf517db" width=600>
+    * <img alt="Code OSS IDE" src="https://github.com/mgaur10/appmod-temp/assets/38972/e65eab05-9642-4b74-890b-0ad6daf517db" width=600>
 
 4. Click the menu 'File -> Open Folder -> hello_word_java' to open your Java Sample Application project directory
-    * <img alt="Code OSS IDE" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/d618f3c3-4cad-4547-bc20-69d20593070f" width=600>
+    * <img alt="Code OSS IDE" src="https://github.com/mgaur10/appmod-temp/assets/38972/d618f3c3-4cad-4547-bc20-69d20593070f" width=600>
 
 5. Click the menu 'Terminal -> New Terminal'
-    * <img alt="Code OSS IDE" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/7bbf23b9-c95f-4d3c-a24c-31efd46abc9e" width=600>
+    * <img alt="Code OSS IDE" src="https://github.com/mgaur10/appmod-temp/assets/38972/7bbf23b9-c95f-4d3c-a24c-31efd46abc9e" width=600>
 
 6. You should see messages about Maven installation, Minikube starting, and Skaffold starting
 7. Authorize your end-user account to the Workstation 'gcloud' cli in the terminal: `gcloud auth login`, and follow the steps to sign in.
@@ -139,20 +139,20 @@ terraform apply --refresh-only
       * You should see a similar message towards the end of the logs: "Started HelloWorldApplication in 3.195 seconds"
       * If you see the message "Checking Cache.." allow ~1 minute for Skaffold to complete it's one-time setup before it builds that application.
       * If you see errors in the Skaffold logs, please troubleshoot accordingly or open a new issue to this repository.
-      * Press Ctrl+C to exit the Skaffold logs and return to the terminal prompt.
+      * Press Ctrl+C to exit the Skaffold logs and return to the terminal prompt.  
     * Send a request to the Java application from the Cloud Workstation terminal to the Minikube cluster:
       ```
       curl http://localhost:9000/
       ```
 9. Make a request to the application through Workstation Public Gateway
     * Click the hyperlink generated in your Cloud Workstation terminal from the previous curl to 'http://localhost:9000/' and view the application response in your web browser. You should see a new browser tab open to an address of the following format: `https://9000-$WORKSTATION_ID.$CLUSTER_ID.cloudworkstations.dev/`.
-    * Note: The Cloud Workstation Public Gateway requires a valid ID token to authenticate your identity. Under most circumstances no action is required on your end. If you are currently signed in to multiple Google account in the same web browser session, you may end up on web page suggesting that your access is denied. In this case ensure that your 'authuser' query param (e.g. authuser=1) is set to the correct authenticated user session and reload the page.
+    * Note: The Cloud Workstation Public Gateway requires a valid ID token to authenticate your identity. Under most circumstances no action is required on your end. If you are currently signed in to multiple Google account in the same web browser session, you may end up on web page suggesting that your access is denied. In this case ensure that your 'authuser' query param (e.g. authuser=1) is set to the correct authenticated user session and reload the page. 
 
 9. Make a code change and validate that change in your inner dev loop
-    * Open `src/main/java/com/example/helloWorld/HelloWorldApplication.java` in your Cloud Workstation IDE and change the "Hello World" string to something different. This change may take ~20 seconds to build, containerize, and deploy to Minikube.
+    * Open `src/main/java/com/example/helloWorld/HelloWorldApplication.java` in your Cloud Workstation IDE and change the "Hello World" string to something different. This change may take ~20 seconds to build, containerize, and deploy to Minikube. 
     * Reload the page on the browser tab open to your application, or send a local request via: `curl http://localhost:9000/`
     * Validate that your response contains your new "Hello World" string.
-    * Note: If your change is still not visible after ~20 seconds, check the Skaffold logs to look for errors: `tail -f /var/log/skaffold.log`
+    * Note: If your change is still not visible after ~20 seconds, check the Skaffold logs to look for errors: `tail -f /var/log/skaffold.log` 
 10. Commit and push your changes to the remote repository:
     ```
     git add src && git commit -m "first custom commit" && git push
@@ -160,8 +160,8 @@ terraform apply --refresh-only
     * Note: Your repository is configured to use your 'gcloud' credentials to authenticate with the remote Cloud Source Repository. If there is an authentication problem, you may have forgotten to run `gcloud auth login` as previously described.
 12. Navigate to Cloud Build and verify that your 'Outer Dev Loop' build pipeline has completed successfully.
     * View the Cloud Build History page and ensure that you've selected the 'us-central1' region from the dropdown.
-    * <img alt="Code Build History Page" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/6e2a31f2-8bc9-4b64-90be-4d65edc2a2b3" width=600>
-    * NOTE: The build/release pipline may take ~12 minutes to complete on the first run. Four builds must successfully complete: one specified in the Cloud Build Trigger (cloudbuild-launcher.yaml), another initiated by the Build through the Cloud Build Trigger (cloudbuild.yaml), and two auto-triggered by Cloud Deploy for the new release, executing Skaffold's 'render' and 'deploy' stages. The GKE Staging Cluster will need to provision a new node during your first pod deployment, which will take an additional few minutes (already factored into the ~12 minutes mentioned earlier).
+    * <img alt="Code Build History Page" src="https://github.com/mgaur10/appmod-temp/assets/38972/6e2a31f2-8bc9-4b64-90be-4d65edc2a2b3" width=600>
+    * NOTE: The build/release pipline may take ~12 minutes to complete on the first run. Four builds must successfully complete: one specified in the Cloud Build Trigger (cloudbuild-launcher.yaml), another initiated by the Build through the Cloud Build Trigger (cloudbuild.yaml), and two auto-triggered by Cloud Deploy for the new release, executing Skaffold's 'render' and 'deploy' stages. The GKE Staging Cluster will need to provision a new node during your first pod deployment, which will take an additional few minutes (already factored into the ~12 minutes mentioned earlier). 
 14. Validate that your application can receive requests from your Cloud Workstations.
     * Open your Cloud Workstation OSS Code IDE in your web browser (or your selected IDE)
     * Set your k8s configuration to reference your remote GKE Cluster: `gcloud container clusters get-credentials hello-world-cluster --region us-central1`
@@ -185,13 +185,13 @@ terraform destroy
 This architecture enhances the inner and outer software development loops in Google Cloud Platform environments, while satisfying key security requirements. Automated with Terraform for minimal setup, it integrates key services like Skaffold, Jib, and Minikube within a Cloud Workstation, and services like Cloud Build, Cloud Deploy, and GKE, all under strict IAM policies and private networking. This solution streamlines development cycles and secure deployments, balancing rapid innovation with key security controls, and aligning with enterprise compliance standards.
 
 ### Inner Development Loop Diagram
-<img alt="Inner Dev Loop Arch" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/9b111769-cd3f-4d71-8cca-92e04e33c3bf" width="400" />
+<img alt="Inner Dev Loop Arch" src="https://github.com/mgaur10/appmod-temp/assets/38972/9b111769-cd3f-4d71-8cca-92e04e33c3bf" width="400" />
 
 ### Outer Development Loop Diagram
-<img alt="Outer Dev Loop Arch" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/d886362e-d959-477a-aa14-65fa80fe8fe0" width="800" />
+<img alt="Outer Dev Loop Arch" src="https://github.com/mgaur10/appmod-temp/assets/38972/d886362e-d959-477a-aa14-65fa80fe8fe0" width="800" />
 
 ### Outer Development Loop - Build Pipelines Diagram
-<img alt="Outer Dev Loop Arch" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/ba88b465-9bd2-4e04-b302-1aa647a2f812" width="800" />
+<img alt="Outer Dev Loop Arch" src="https://github.com/mgaur10/appmod-temp/assets/38972/ba88b465-9bd2-4e04-b302-1aa647a2f812" width="800" />
 
 
 ### Application Development Process Flow Diagram
@@ -220,9 +220,9 @@ The Terraform script is designed to deploy resources within a new folder in the 
 - Aligns with Security and Compliance Standards: Adheres to organizational policies and governance structures.
 
 ## Infrastructure
-The infrastructure for this solution aims to create a seamless DevOps pipeline for developers, employing a range of Google Cloud services for an integrated development experience. It is designed for Google Cloud customers who operate within an organizational structure that mandates enterprise security measures. This architecture is designed with the following in mind:
+The infrastructure for this solution aims to create a seamless DevOps pipeline for developers, employing a range of Google Cloud services for an integrated development experience. It is designed for Google Cloud customers who operate within an organizational structure that mandates enterprise security measures. This architecture is designed with the following in mind: 
 - No internet access for resources
-- Full compliance with commonly implemented organizational policies, including but not limited to constraints/compute.vmExternalIpAccess, constraints/compute.requireShieldedVm, and constraints/iam.disableServiceAccountKeyCreation.
+- Full compliance with commonly implemented organizational policies, including but not limited to constraints/compute.vmExternalIpAccess, constraints/compute.requireShieldedVm, and constraints/iam.disableServiceAccountKeyCreation. 
 - Compatibility with Shared VPC models, facilitating separation of duties across various departments within your organization
 - Compatibility with  VPC Service Controls to mitigate risks associated with sensitive data leakage and unauthorized access
 - A least-privilege model through role-based IAM policies
@@ -263,7 +263,7 @@ Components to be deployed:
 
 The Cloud Build private worker pool and the GKE control plane are placed in separate Google-managed VPCs that are peered to the customer's VPC.
 This two-VPC design is necessary because the services cannot communicate directly with one another via a single customer VPC due to transitive peering restrictions.
-
+  
 - Cloud Workstation
     - One workstation cluster using the primary subnet in VPC 1
     - Private endpoint enabled, to ensure only private access to the workstations.
