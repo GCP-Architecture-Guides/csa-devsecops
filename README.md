@@ -13,7 +13,7 @@ Note: While the included sample application uses Java and Maven, it is entirely 
 # Architecture
 
 ## Design Diagrams
-<img alt="Infra Arch" src="https://github.com/GCP-Architecture-Guides/csa-devsecops/assets/38972/7edee343-d6d4-4de3-a462-6b457e30478c" width="900" />
+<img alt="Infra Arch" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/7edee343-d6d4-4de3-a462-6b457e30478c" width="900" />
 
 ## Product and services
 This demo uses Terraform to setup the Secure DevOps Architecture in a single folder and single project. The underlying infrastructure uses Google Cloud services like
@@ -60,7 +60,7 @@ Organization Policy Administrator
 Project Creator
 ```
 
-<img alt="Required IAM Organization Policies" src="https://github.com/GCP-Architecture-Guides/csa-devsecops/assets/38972/4f2cbcd2-47e1-4742-8400-16672c54836a" width="600"/>
+<img alt="Required IAM Organization Policies" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/4f2cbcd2-47e1-4742-8400-16672c54836a" width="600"/>
 
 ### 2. Get the code
 Clone the GitHub repository and navigate to the root of the repository.
@@ -76,11 +76,11 @@ You will need to configure your preferred Organization ID, Billing Account ID, a
 
 To find your Organization ID, you may use the Cloud Console to open the project selector and copy your Organization ID:
 
-<img alt="Organization ID in GUI" src="https://github.com/GCP-Architecture-Guides/csa-devsecops/assets/38972/f729e791-5777-4614-85e2-2b5e38fe2c3c" width="600"/>
+<img alt="Organization ID in GUI" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/f729e791-5777-4614-85e2-2b5e38fe2c3c" width="600"/>
 
 To find your Billing Account ID, you may use the Cloud Console to navigate to the "Billing Acccounts" page and copy your Billing ID:
 
-<img alt="Billing ID in GUI" src="https://github.com/GCP-Architecture-Guides/csa-devsecops/assets/38972/df294c6b-ab98-4056-b492-7c5bc10dd2f9" width="600"/>
+<img alt="Billing ID in GUI" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/df294c6b-ab98-4056-b492-7c5bc10dd2f9" width="600"/>
 
 From the root folder of this repo, run the following commands to configure Terraform:
 
@@ -119,18 +119,18 @@ terraform apply --refresh-only
 
 #### Use your Workstation
 1. Open a Web Browser and navigate to the [Cloud Workstations page](https://console.cloud.google.com/workstations/list) through a web browser and select your new project.
-   * <img alt="Select Your New Project" src="https://github.com/GCP-Architecture-Guides/csa-devsecops/assets/38972/ee3e2047-bc4d-4a67-9a54-2f959c5dc0dc" width="600" />
+   * <img alt="Select Your New Project" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/ee3e2047-bc4d-4a67-9a54-2f959c5dc0dc" width="600" />
 2. Navigate to you Cloud Workstation (named 'hello-world-worksation' by default) and click the 'Launch' button. Note: If you see the 'Start' button instead of 'Launch', click the 'Start' button and then click the 'Launch' button once it becomes available.
-    * <img alt="Workstation File Menu GUI" src="https://github.com/GCP-Architecture-Guides/csa-devsecops/assets/38972/61aac3fa-f492-41e0-82f8-91d4e4b4b79c" width=300>
+    * <img alt="Workstation File Menu GUI" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/61aac3fa-f492-41e0-82f8-91d4e4b4b79c" width=300>
 
 3. You should now be in a new browser tab viewing your 'Code OSS' IDE.
-    * <img alt="Code OSS IDE" src="https://github.com/GCP-Architecture-Guides/csa-devsecops/assets/38972/e65eab05-9642-4b74-890b-0ad6daf517db" width=600>
+    * <img alt="Code OSS IDE" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/e65eab05-9642-4b74-890b-0ad6daf517db" width=600>
 
 4. Click the menu 'File -> Open Folder -> hello_word_java' to open your Java Sample Application project directory
-    * <img alt="Code OSS IDE" src="https://github.com/GCP-Architecture-Guides/csa-devsecops/assets/38972/d618f3c3-4cad-4547-bc20-69d20593070f" width=600>
+    * <img alt="Code OSS IDE" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/d618f3c3-4cad-4547-bc20-69d20593070f" width=600>
 
 5. Click the menu 'Terminal -> New Terminal'
-    * <img alt="Code OSS IDE" src="https://github.com/GCP-Architecture-Guides/csa-devsecops/assets/38972/7bbf23b9-c95f-4d3c-a24c-31efd46abc9e" width=600>
+    * <img alt="Code OSS IDE" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/7bbf23b9-c95f-4d3c-a24c-31efd46abc9e" width=600>
 
 6. You should see messages about Maven installation, Minikube starting, and Skaffold starting
 7. Authorize your end-user account to the Workstation 'gcloud' cli in the terminal: `gcloud auth login`, and follow the steps to sign in.
@@ -160,7 +160,7 @@ terraform apply --refresh-only
     * Note: Your repository is configured to use your 'gcloud' credentials to authenticate with the remote Cloud Source Repository. If there is an authentication problem, you may have forgotten to run `gcloud auth login` as previously described.
 12. Navigate to Cloud Build and verify that your 'Outer Dev Loop' build pipeline has completed successfully.
     * View the Cloud Build History page and ensure that you've selected the 'us-central1' region from the dropdown.
-    * <img alt="Code Build History Page" src="https://github.com/GCP-Architecture-Guides/csa-devsecops/assets/38972/6e2a31f2-8bc9-4b64-90be-4d65edc2a2b3" width=600>
+    * <img alt="Code Build History Page" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/6e2a31f2-8bc9-4b64-90be-4d65edc2a2b3" width=600>
     * NOTE: The build/release pipline may take ~12 minutes to complete on the first run. Four builds must successfully complete: one specified in the Cloud Build Trigger (cloudbuild-launcher.yaml), another initiated by the Build through the Cloud Build Trigger (cloudbuild.yaml), and two auto-triggered by Cloud Deploy for the new release, executing Skaffold's 'render' and 'deploy' stages. The GKE Staging Cluster will need to provision a new node during your first pod deployment, which will take an additional few minutes (already factored into the ~12 minutes mentioned earlier).
 14. Validate that your application can receive requests from your Cloud Workstations.
     * Open your Cloud Workstation OSS Code IDE in your web browser (or your selected IDE)
@@ -185,13 +185,13 @@ terraform destroy
 This architecture enhances the inner and outer software development loops in Google Cloud Platform environments, while satisfying key security requirements. Automated with Terraform for minimal setup, it integrates key services like Skaffold, Jib, and Minikube within a Cloud Workstation, and services like Cloud Build, Cloud Deploy, and GKE, all under strict IAM policies and private networking. This solution streamlines development cycles and secure deployments, balancing rapid innovation with key security controls, and aligning with enterprise compliance standards.
 
 ### Inner Development Loop Diagram
-<img alt="Inner Dev Loop Arch" src="https://github.com/GCP-Architecture-Guides/csa-devsecops/assets/38972/9b111769-cd3f-4d71-8cca-92e04e33c3bf" width="400" />
+<img alt="Inner Dev Loop Arch" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/9b111769-cd3f-4d71-8cca-92e04e33c3bf" width="400" />
 
 ### Outer Development Loop Diagram
-<img alt="Outer Dev Loop Arch" src="https://github.com/GCP-Architecture-Guides/csa-devsecops/assets/38972/d886362e-d959-477a-aa14-65fa80fe8fe0" width="800" />
+<img alt="Outer Dev Loop Arch" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/d886362e-d959-477a-aa14-65fa80fe8fe0" width="800" />
 
 ### Outer Development Loop - Build Pipelines Diagram
-<img alt="Outer Dev Loop Arch" src="https://github.com/GCP-Architecture-Guides/csa-devsecops/assets/38972/ba88b465-9bd2-4e04-b302-1aa647a2f812" width="800" />
+<img alt="Outer Dev Loop Arch" src="https://github.com/mgaur10/appmod-temp/tree/main/assets/assets/38972/ba88b465-9bd2-4e04-b302-1aa647a2f812" width="800" />
 
 
 ### Application Development Process Flow Diagram
