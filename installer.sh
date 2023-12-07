@@ -47,9 +47,14 @@ CLOUD_WORKSTATION_CONFIG="$CLOUD_WORKSTATION_CONFIG"
 
 CLOUD_SOURCE_REPOSITORY_DIR="${USER_SOURCE_REPO_LOCAL_DIR}/${USER_SOURCE_REPO_NAME}"
 
+SUDO=''
+if (( $EUID != 0 )); then
+    SUDO='sudo'
+fi
+
 if ! command -v jq &> /dev/null
 then
-  sudo apt-get install jq -y -q
+  $SUDO apt-get install jq -y -q
 fi
 
 # Set programatically for git config
@@ -67,7 +72,7 @@ cp -r java-sample-app "${WORK_DIR}"
 # Install 'nc' if it doesn't already exits
 if ! command -v nc &> /dev/null
 then
-  sudo apt-get install netcat -y -q
+  $SUDO apt-get install netcat -y -q
 fi
 
 # Don't substitute $PROJECT_ID in cloudbuild.yaml since it's a predefined Cloud Build var
