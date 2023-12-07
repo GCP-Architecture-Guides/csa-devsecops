@@ -87,7 +87,8 @@ rm "${WORK_DIR}/cloudbuild-launcher.yaml.tmpl"
 
 # commit back changes to the Cloud Source Repository
 cp -r "${WORK_DIR}/." "${CLOUD_SOURCE_REPOSITORY_DIR}/"
-pushd "${CLOUD_SOURCE_REPOSITORY_DIR}"
+CURRENT_DIR="$(pwd)"
+cd "${CLOUD_SOURCE_REPOSITORY_DIR}"
   if [ -z "$(git config --get user.email)" ]; then
     git config --global user.email "${USER_EMAIL}"
   fi
@@ -103,8 +104,7 @@ pushd "${CLOUD_SOURCE_REPOSITORY_DIR}"
     --file="clouddeploy.yml" \
     --region="${REGION}" \
     --project="${PROJECT_ID}"
-popd
-
+cd "${CURRENT_DIR}"
 
 CONFIG_DIR="$(mktemp -d)/conf"
 
