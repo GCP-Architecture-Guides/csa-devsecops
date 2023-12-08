@@ -47,7 +47,7 @@ CLOUD_WORKSTATION_CONFIG="$CLOUD_WORKSTATION_CONFIG"
 
 CLOUD_SOURCE_REPOSITORY_DIR="${USER_SOURCE_REPO_LOCAL_DIR}/${USER_SOURCE_REPO_NAME}"
 
-SUDO=""; if [ "${EUID}" == "0" ]; then SUDO="sudo"; fi
+#SUDO=""; if [ "${EUID}" != "0" ]; then SUDO="sudo"; fi
 
 if ! command -v jq &> /dev/null
 then
