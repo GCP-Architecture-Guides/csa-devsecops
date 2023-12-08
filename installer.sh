@@ -146,9 +146,7 @@ gcloud beta workstations start-tcp-tunnel $CLOUD_WORKSTATION_NAME 22 \
   --local-host-port="localhost:${TUNNEL_PORT}" &
 
 echo "waiting for tunnel to open.."
-echo "print jobs for debugging..."
-jobs
-TUNNEL_PID="$(jobs -l | tail -n1 | awk '{print $2}')"
+TUNNEL_PID="$(jobs -p | tail -n1)"
 
 while ! nc -z localhost $TUNNEL_PORT; do
   if ! ps -p $TUNNEL_PID; then
