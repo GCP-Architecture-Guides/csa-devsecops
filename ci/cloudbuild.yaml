@@ -48,7 +48,7 @@ steps:
 
 - id: 'tf apply'
   name: 'gcr.io/google.com/cloudsdktool/google-cloud-cli'
-  entrypoint: 'sh'
+  entrypoint: 'bash'
   args:
   - '-ex'
   - '-c'
