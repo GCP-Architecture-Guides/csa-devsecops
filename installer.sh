@@ -47,11 +47,8 @@ CLOUD_WORKSTATION_CONFIG="$CLOUD_WORKSTATION_CONFIG"
 
 CLOUD_SOURCE_REPOSITORY_DIR="${USER_SOURCE_REPO_LOCAL_DIR}/${USER_SOURCE_REPO_NAME}"
 
-SUDO=''
-if (( $EUID != 0 )); then
-    SUDO='sudo'
-fi
-
+SUDO=""; [ "${EUID}" != "0" ] && SUDO="sudo"
+    
 if ! command -v jq &> /dev/null
 then
   $SUDO apt-get install jq -y -q
@@ -146,6 +143,8 @@ gcloud beta workstations start-tcp-tunnel $CLOUD_WORKSTATION_NAME 22 \
   --local-host-port="localhost:${TUNNEL_PORT}" &
 
 echo "waiting for tunnel to open.."
+echo "jobs debugging: $(jobs -p)"
+echo "jobs debugging with tail: $(jobs -p | tail -n1)"
 TUNNEL_PID="$(jobs -p | tail -n1)"
 
 while ! nc -z localhost $TUNNEL_PORT; do
