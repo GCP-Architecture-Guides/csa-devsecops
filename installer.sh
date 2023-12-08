@@ -47,8 +47,8 @@ CLOUD_WORKSTATION_CONFIG="$CLOUD_WORKSTATION_CONFIG"
 
 CLOUD_SOURCE_REPOSITORY_DIR="${USER_SOURCE_REPO_LOCAL_DIR}/${USER_SOURCE_REPO_NAME}"
 
-SUDO=""; [ "${EUID}" != "0" ] && SUDO="sudo"
-    
+SUDO=""; if [ "${EUID}" == "0" ]; then SUDO="sudo"; fi
+
 if ! command -v jq &> /dev/null
 then
   $SUDO apt-get install jq -y -q
