@@ -177,7 +177,7 @@ Note: We encourage feedback from users of all different skill levels and technic
 
 1. Fork this Repository
 2. Create a new branch in your reposotry with a name of your choice (e.g. feedback)
-3. Edit this README.md add add your Github username and (optionally) name to the 'Wall of Users' section on this page
+3. Edit this README.md add add your Github username and (optionally) name to the ['Wall of Users'](#users) section on this page
 4. Submit a Pull Request from your branch on your forked repository
 5. Add feedback to the Pull Request description regarding your experience running the automation and using the DevSecOps landing zone. Even a good old "LGTM" would be great.
 6. Submit the pull request and we will be delighted to merge it.
@@ -198,9 +198,17 @@ Optionally, you may manually delete the project and folder.
   <br>
 
 # 💪 Wall of Users 💪
+
+##### Core Team
 * [@willsu](https://github.com/willsu) - Will Sulzer
 * [@arobinson12](https://github.com/arobinson12) - Ahmad Robinson
 * [@mgaur10](https://github.com/mgaur10) - Manish Gaur
+
+##### Contributors
+* \<your name here\>
+
+##### Users
+* \<your name here\>
 
 # Architecture Breakdown
 This architecture enhances the inner and outer software development loops in Google Cloud Platform environments, while satisfying key security requirements. Automated with Terraform for minimal setup, it integrates key services like Skaffold, Jib, and Minikube within a Cloud Workstation, and services like Cloud Build, Cloud Deploy, and GKE, all under strict IAM policies and private networking. This solution streamlines development cycles and secure deployments, balancing rapid innovation with key security controls, and aligning with enterprise compliance standards.
