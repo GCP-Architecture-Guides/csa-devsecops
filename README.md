@@ -15,6 +15,8 @@ Note: While the included sample application uses Java and Maven, it is entirely 
 ## Design Diagrams
 <img alt="Infra Arch" src="https://github.com/mgaur10/appmod-temp/assets/38972/7edee343-d6d4-4de3-a462-6b457e30478c" width="900" />
 
+Note: See the 'Architecture Breakdown' section below for more info on the inner/outer development loops.
+
 ## Product and services
 This demo uses Terraform to setup the Secure DevOps Architecture in a single folder and single project. The underlying infrastructure uses Google Cloud services like  
 * [Artifact Registry](https://cloud.google.com/artifact-registry)
@@ -169,18 +171,37 @@ terraform apply --refresh-only
     * Send a request to the Java application from the Cloud Workstation terminal to the Minikube cluster: `curl http://localhost:9090`.  You may also click the hyperlink generated in your Cloud Workstation terminal from the 'http://localhost:9090' and view the application response in your web browser.
 16. When finished testing your remote cluster, set your local k8s configuration back to Minikube for further dev work: `kubectl config use-context minikube`
 
-### 5. How to clean-up?
+### 5. Submit feedback and add your name to the 'Wall of Users' (Optional, but encouraged!) 
+
+Note: We encourage feedback from users of all different skill levels and technical backgrounds. Our goal is to make this project accessible for Cloud Developers and related roles. So whether you've come to this project after writing your first 'Hello World' application or you are Linus Torvalds himself, we want to hear about your experience. 
+
+1. Fork this Repository
+2. Create a new branch in your reposotry with a name of your choice (e.g. feedback)
+3. Edit this README.md add add your Github username and (optionally) name to the 'Wall of Users' section on this page
+4. Submit a Pull Request from your branch on your forked repository
+5. Add feedback to the Pull Request description regarding your experience running the automation and using the DevSecOps landing zone. Even a good old "LGTM" would be great.
+6. Submit the pull request and we will be delighted to merge it.
+
+### 6. How to clean-up?
 
 From the root folder of this repo, run the following command:
 ```
 terraform destroy
 ```
 
-### 6. Deployment Duration
+Optionally, you may manually delete the project and folder.
+
+### 7. Deployment Duration
 - Configuration: 2-3 mins (approx.)
 - Deployment: 20-25 mins (approx.)
 
   <br>
+
+# 💪 Wall of Users 💪
+* [@willsu](https://github.com/willsu) - Will Sulzer
+* [@arobinson12](https://github.com/arobinson12) - Ahmad Robinson
+* [@mgaur10](https://github.com/mgaur10) - Manish Gaur
+
 # Architecture Breakdown
 This architecture enhances the inner and outer software development loops in Google Cloud Platform environments, while satisfying key security requirements. Automated with Terraform for minimal setup, it integrates key services like Skaffold, Jib, and Minikube within a Cloud Workstation, and services like Cloud Build, Cloud Deploy, and GKE, all under strict IAM policies and private networking. This solution streamlines development cycles and secure deployments, balancing rapid innovation with key security controls, and aligning with enterprise compliance standards.
 
