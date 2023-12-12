@@ -197,7 +197,7 @@ Optionally, you may manually delete the project and folder.
 
   <br>
 
-# 💪 Wall of Users 💪
+# 🧱 Wall of Users 🧱
 
 ##### Core Team
 * [@willsu](https://github.com/willsu) - Will Sulzer
