@@ -68,8 +68,8 @@ Project Creator
 Clone the GitHub repository and navigate to the root of the repository.
 
 ```BASH
-git clone https://github.com/GCP-Architecture-Guides/CSA-App-Dev.git
-cd CSA-App-Dev
+git clone https://github.com/GCP-Architecture-Guides/csa-devsecops.git
+cd csa-devsecops
 ```
 
 ### 3. Deploy the infrastructure using Terraform
