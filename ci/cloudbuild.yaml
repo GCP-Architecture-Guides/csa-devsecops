@@ -79,8 +79,8 @@ steps:
     unzip terraform_1.6.3_linux_amd64.zip
     mv terraform /usr/bin
 
-    PROJECT_ID=terraform show -json terraform.tfstate | jq -r '.values.root_module.child_modules[].resources[] | select(.name=="app_dev_project") | .values.project_id'
+    PROJECT_ID=$$(terraform show -json terraform.tfstate | jq -r '.values.root_module.child_modules[].resources[] | select(.name=="app_dev_project") | .values.project_id')
     gcloud projects delete $$PROJECT_ID
-    FOLDER_ID=terraform show -json terraform.tfstate | jq -r '.values.root_module.child_modules[].resources[] | select(.name=="app_dev_project") | .values.folder_id' 
+    FOLDER_ID=$$(terraform show -json terraform.tfstate | jq -r '.values.root_module.child_modules[].resources[] | select(.name=="app_dev_project") | .values.folder_id') 
     gcloud resource-manager folders delete $$FOLDER_ID
 
