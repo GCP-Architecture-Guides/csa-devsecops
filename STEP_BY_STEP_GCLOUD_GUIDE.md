@@ -611,7 +611,7 @@ kubectl apply -f kubernetes/deployment.yml
 gcloud builds submit --region=us-central1 --config cloudbuild.yaml . # note: '.' is the location of your local codebase working directory.
 ```
 
-2. Run the Trigger Manually
+2. Run the Trigger manually
 ```BASH
 #TODO: add gcloud to run the trigger, or instructions to run through Cloud Console UI
 ```
