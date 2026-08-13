@@ -19,15 +19,15 @@
 
 # Create GKE cluster
 resource "google_container_cluster" "hello_world_cluster" {
-  name     = var.gke_cluster_name
-  location = var.network_region
-  project  = google_project.app_dev_project.project_id
-  enable_autopilot = true   # Enabling autopilot for this cluster
-  network    = google_compute_network.primary_network.self_link
-  subnetwork = google_compute_subnetwork.vpc_subnetwork.self_link
-  
+  name             = var.gke_cluster_name
+  location         = var.network_region
+  project          = google_project.app_dev_project.project_id
+  enable_autopilot = true # Enabling autopilot for this cluster
+  network          = google_compute_network.primary_network.self_link
+  subnetwork       = google_compute_subnetwork.vpc_subnetwork.self_link
+
   ip_allocation_policy {
-    cluster_secondary_range_name = "pod-range"
+    cluster_secondary_range_name  = "pod-range"
     services_secondary_range_name = "service-range"
   }
 

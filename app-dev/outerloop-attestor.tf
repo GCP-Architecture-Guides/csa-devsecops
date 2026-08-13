@@ -22,9 +22,9 @@ resource "google_kms_key_ring" "kms_keyring" {
   location = var.network_region
   project  = google_project.app_dev_project.project_id
 
-depends_on = [
-time_sleep.wait_for_org_policy
-]  
+  depends_on = [
+    time_sleep.wait_for_org_policy
+  ]
 
 }
 
@@ -36,8 +36,8 @@ resource "google_kms_crypto_key" "signing_key" {
   purpose  = var.kms_key_purpose
 
   version_template {
-    algorithm        = var.kms_key_algorithm
-  #  protection_level = var.kms_protection_level # This attribute forces recreation of the resource
+    algorithm = var.kms_key_algorithm
+    #  protection_level = var.kms_protection_level # This attribute forces recreation of the resource
   }
 
   lifecycle {
@@ -45,8 +45,8 @@ resource "google_kms_crypto_key" "signing_key" {
   }
 
   depends_on = [
-google_kms_crypto_key.signing_key
-]  
+    google_kms_key_ring.kms_keyring
+  ]
 
 }
 
@@ -63,15 +63,15 @@ resource "google_container_analysis_note" "note" {
     }
   }
   depends_on = [
-time_sleep.wait_for_org_policy,
-]  
-  
+    time_sleep.wait_for_org_policy,
+  ]
+
 }
 
 
 data "google_kms_crypto_key_version" "signing_key_version" {
   crypto_key = google_kms_crypto_key.signing_key.id
-  depends_on = [google_kms_crypto_key.signing_key]  
+  depends_on = [google_kms_crypto_key.signing_key]
 
 }
 
@@ -90,8 +90,7 @@ resource "google_binary_authorization_attestor" "attestor" {
   }
 
   depends_on = [
-data.google_kms_crypto_key_version.signing_key_version,
-google_container_analysis_note.note,
-]  
+    data.google_kms_crypto_key_version.signing_key_version,
+    google_container_analysis_note.note,
+  ]
 }
-

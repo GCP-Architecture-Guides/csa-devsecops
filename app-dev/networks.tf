@@ -9,8 +9,7 @@
 ##  Unless required by applicable law or agreed to in writing, software
 ##  distributed under the License is distributed on an "AS IS" BASIS,
 ##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-##  See the License for the specific language governing permissions and
-##  limitations under the License.
+##  See the License for the_project_id.
 
 
 ##  This code creates demo environment for CSA - Application Development Architecture Pattern   ##
@@ -19,7 +18,7 @@
 
 # Create VPC network
 resource "google_compute_network" "primary_network" {
-  name = var.vpc_network_name
+  name                            = var.vpc_network_name
   auto_create_subnetworks         = false
   delete_default_routes_on_create = false
   project                         = google_project.app_dev_project.project_id
@@ -31,19 +30,11 @@ resource "google_compute_network" "primary_network" {
 
 ### TO to updated
 resource "google_compute_subnetwork" "vpc_subnetwork" {
-  name = var.vpc_subnetwork_name
-  #  provider      = google-beta
+  name          = var.vpc_subnetwork_name
   ip_cidr_range = var.ip_subnetwork_cidr_primary
   region        = var.network_region
   network       = google_compute_network.primary_network.id
   project       = google_project.app_dev_project.project_id
-  # Enabling VPC flow logs
-  # log_config {
-  #   aggregation_interval = "INTERVAL_10_MIN"
-  #   flow_sampling        = 0.5
-  #   metadata             = "INCLUDE_ALL_METADATA"
-  # }
-  # Enable private Google access to be added in v2
 
   secondary_ip_range {
     range_name    = "pod-range"

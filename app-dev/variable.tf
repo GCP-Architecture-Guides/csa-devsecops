@@ -392,4 +392,3 @@ variable "attestor_name" {
   type        = string
   description = "attestor name"
 }
-

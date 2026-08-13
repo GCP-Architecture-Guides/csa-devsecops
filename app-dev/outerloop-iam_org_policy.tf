@@ -9,8 +9,7 @@
 ##  Unless required by applicable law or agreed to in writing, software
 ##  distributed under the License is distributed on an "AS IS" BASIS,
 ##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-##  See the License for the specific language governing permissions and
-##  limitations under the License.
+##  See the License for the_project_id.
 
 
 ##  This code creates demo environment for CSA - Application Development Architecture Pattern   ##
@@ -79,9 +78,9 @@ module "org-policy-vmExternalIpAccess" {
 resource "time_sleep" "wait_for_org_policy" {
   depends_on = [
     module.org-policy-requireShieldedVm,
-     module.org-policy-domain-restricted-sharing,
+    module.org-policy-domain-restricted-sharing,
     # module.org-policy-vmExternalIpAccess,  # Enable if module.org-policy-vmExternalIpAccess is enabled
-      google_project_organization_policy.restrict_vpn_peer_ips,
+    google_project_organization_policy.restrict_vpn_peer_ips,
   ]
   create_duration  = "180s"
   destroy_duration = "30s"

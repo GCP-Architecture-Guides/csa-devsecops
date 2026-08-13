@@ -9,8 +9,7 @@
 ##  Unless required by applicable law or agreed to in writing, software
 ##  distributed under the License is distributed on an "AS IS" BASIS,
 ##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-##  See the License for the specific language governing permissions and
-##  limitations under the License.
+##  See the License for the_project_id.
 
 
 ##  This code creates demo environment for CSA - Application Development Architecture Pattern   ##
@@ -18,12 +17,12 @@
 
 
 output "_step1_follow_the_steps_to_register_service_account_for_OSS" {
-  value     = "Follow the URL: https://assuredoss.developers.google.com/"
+  value = "Follow the URL: https://assuredoss.developers.google.com/"
 }
 
 
 output "_step2_register_the_service_account_for_OSS" {
-  value     = "${google_service_account.developer_service_account.email}"
+  value = google_service_account.developer_service_account.email
 }
 
 output "_step3_execute_the_command_toget_workstation_HTTP_URL" {
@@ -33,9 +32,3 @@ output "_step3_execute_the_command_toget_workstation_HTTP_URL" {
 output "_step4_workstation_https_access" {
   value = "https://${google_workstations_workstation.hello_world_workstation.host}"
 }
-
-
-
-
-
-
