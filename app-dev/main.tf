@@ -34,10 +34,10 @@ resource "google_folder" "app_dev" {
 resource "google_project" "app_dev_project" {
   billing_account = var.billing_account
   #org_id          = var.organization_id    # Only one of `org_id` or `folder_id` may be specified
-  folder_id  = google_folder.app_dev.name   # Only one of `org_id` or `folder_id` may be specified
-  name       = var.project_name
-  project_id = "${var.project_name}-${random_id.random_suffix.hex}"
-skip_delete = var.skip_delete
+  folder_id       = google_folder.app_dev.name # Only one of `org_id` or `folder_id` may be specified
+  name            = var.project_name
+  project_id      = "${var.project_name}-${random_id.random_suffix.hex}"
+  deletion_policy = var.skip_delete == "true" ? "ABANDON" : "DELETE"
 }
 
 
@@ -94,5 +94,3 @@ resource "time_sleep" "wait_enable_service_api" {
   create_duration  = "45s"
   destroy_duration = "45s"
 }
-
-

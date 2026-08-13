@@ -9,8 +9,7 @@
 ##  Unless required by applicable law or agreed to in writing, software
 ##  distributed under the License is distributed on an "AS IS" BASIS,
 ##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-##  See the License for the specific language governing permissions and
-##  limitations under the License.
+##  See the License for the_project_id.
 
 
 
@@ -62,9 +61,9 @@ resource "google_compute_global_address" "reserved_range" {
 
 resource "null_resource" "update_network_peering" {
   triggers = {
-  #  always_run = "${timestamp()}"
-  gke_peering = "${google_container_cluster.hello_world_cluster.private_cluster_config[0].peering_name}"
-  nw_name = "${google_compute_network.primary_network.name}"
+    #  always_run = "${timestamp()}"
+    gke_peering = google_container_cluster.hello_world_cluster.private_cluster_config[0].peering_name
+    nw_name     = google_compute_network.primary_network.name
   }
 
   provisioner "local-exec" {
@@ -102,13 +101,13 @@ resource "google_service_networking_connection" "private_service_connection" {
 resource "google_compute_network_peering_routes_config" "peering_routes" {
   peering = google_service_networking_connection.private_service_connection.peering
   network = google_compute_network.private_pool_peering_vpc_name.name
-  project                         = google_project.app_dev_project.project_id
+  project = google_project.app_dev_project.project_id
 
   import_custom_routes = true
   export_custom_routes = true
   depends_on = [
-google_service_networking_connection.private_service_connection
-]  
+    google_service_networking_connection.private_service_connection
+  ]
 }
 
 
@@ -122,8 +121,8 @@ resource "google_cloudbuild_worker_pool" "private_pool" {
   }
 
   worker_config {
-    disk_size_gb = 100
-    machine_type = "e2-standard-4"
+    disk_size_gb   = 100
+    machine_type   = "e2-standard-4"
     no_external_ip = true
   }
   depends_on = [
@@ -134,10 +133,10 @@ resource "google_cloudbuild_worker_pool" "private_pool" {
 
 
 resource "google_compute_ha_vpn_gateway" "vpn_gateway_1" {
-  name    = var.gw_name_1
-  network = google_compute_network.private_pool_peering_vpc_name.id
-  region  = var.network_region
-  project = google_project.app_dev_project.project_id
+  name       = var.gw_name_1
+  network    = google_compute_network.private_pool_peering_vpc_name.id
+  region     = var.network_region
+  project    = google_project.app_dev_project.project_id
   stack_type = "IPV4_ONLY"
   depends_on = [
     google_compute_network.private_pool_peering_vpc_name,
@@ -146,10 +145,10 @@ resource "google_compute_ha_vpn_gateway" "vpn_gateway_1" {
 
 
 resource "google_compute_ha_vpn_gateway" "vpn_gateway_2" {
-  name    = var.gw_name_2
-  network = google_compute_network.primary_network.id
-  region  = var.network_region
-  project = google_project.app_dev_project.project_id
+  name       = var.gw_name_2
+  network    = google_compute_network.primary_network.id
+  region     = var.network_region
+  project    = google_project.app_dev_project.project_id
   stack_type = "IPV4_ONLY"
   depends_on = [
     google_compute_network.primary_network,
@@ -205,11 +204,11 @@ resource "google_compute_vpn_tunnel" "vpn_tunnel_gw1_if0" {
 
   ike_version = 2
 
-   depends_on = [
- google_compute_ha_vpn_gateway.vpn_gateway_1,
- google_compute_router.router_name_1,
- random_password.vpn_shared_secret,
- google_compute_ha_vpn_gateway.vpn_gateway_2,
+  depends_on = [
+    google_compute_ha_vpn_gateway.vpn_gateway_1,
+    google_compute_router.router_name_1,
+    random_password.vpn_shared_secret,
+    google_compute_ha_vpn_gateway.vpn_gateway_2,
   ]
 }
 
@@ -231,11 +230,11 @@ resource "google_compute_vpn_tunnel" "vpn_tunnel_gw1_if1" {
 
   ike_version = 2
 
-     depends_on = [
-google_compute_ha_vpn_gateway.vpn_gateway_1,
-google_compute_router.router_name_1,
-random_password.vpn_shared_secret,
-google_compute_ha_vpn_gateway.vpn_gateway_2,
+  depends_on = [
+    google_compute_ha_vpn_gateway.vpn_gateway_1,
+    google_compute_router.router_name_1,
+    random_password.vpn_shared_secret,
+    google_compute_ha_vpn_gateway.vpn_gateway_2,
 
   ]
 }
@@ -257,11 +256,11 @@ resource "google_compute_vpn_tunnel" "vpn_tunnel_gw2_if0" {
 
   ike_version = 2
 
-     depends_on = [
-google_compute_router.router_name_2,
-google_compute_ha_vpn_gateway.vpn_gateway_2,
-google_compute_ha_vpn_gateway.vpn_gateway_1,
-random_password.vpn_shared_secret,
+  depends_on = [
+    google_compute_router.router_name_2,
+    google_compute_ha_vpn_gateway.vpn_gateway_2,
+    google_compute_ha_vpn_gateway.vpn_gateway_1,
+    random_password.vpn_shared_secret,
   ]
 }
 
@@ -284,11 +283,11 @@ resource "google_compute_vpn_tunnel" "vpn_tunnel_gw2_if1" {
 
   ike_version = 2
 
-     depends_on = [
-        google_compute_router.router_name_2,
-google_compute_ha_vpn_gateway.vpn_gateway_2,
-google_compute_ha_vpn_gateway.vpn_gateway_1,
-random_password.vpn_shared_secret,
+  depends_on = [
+    google_compute_router.router_name_2,
+    google_compute_ha_vpn_gateway.vpn_gateway_2,
+    google_compute_ha_vpn_gateway.vpn_gateway_1,
+    random_password.vpn_shared_secret,
   ]
 }
 
@@ -305,9 +304,9 @@ resource "google_compute_router_interface" "router_1_interface_0" {
 
   ip_range = "${var.ip_address_1}/${var.mask_length}"
 
-     depends_on = [
-google_compute_vpn_tunnel.vpn_tunnel_gw1_if0,
-google_compute_router.router_name_1,
+  depends_on = [
+    google_compute_vpn_tunnel.vpn_tunnel_gw1_if0,
+    google_compute_router.router_name_1,
   ]
 
 }
@@ -329,9 +328,9 @@ resource "google_compute_router_peer" "router_1_peer_gw1_if0" {
   }
   advertise_mode = "CUSTOM"
 
-     depends_on = [
-google_compute_router_interface.router_1_interface_0,
-google_compute_router.router_name_1,
+  depends_on = [
+    google_compute_router_interface.router_1_interface_0,
+    google_compute_router.router_name_1,
   ]
 
 }
@@ -348,9 +347,9 @@ resource "google_compute_router_interface" "router_1_interface_1" {
   vpn_tunnel = google_compute_vpn_tunnel.vpn_tunnel_gw1_if1.name
 
   ip_range = "${var.ip_address_2}/${var.mask_length}"
-   depends_on = [
-google_compute_vpn_tunnel.vpn_tunnel_gw1_if1,
-google_compute_router.router_name_1,
+  depends_on = [
+    google_compute_vpn_tunnel.vpn_tunnel_gw1_if1,
+    google_compute_router.router_name_1,
   ]
 
 
@@ -372,9 +371,9 @@ resource "google_compute_router_peer" "router_1_peer_gw1_if1" {
   }
   advertise_mode = "CUSTOM"
 
-     depends_on = [
-google_compute_router_interface.router_1_interface_1,
-google_compute_router.router_name_1,
+  depends_on = [
+    google_compute_router_interface.router_1_interface_1,
+    google_compute_router.router_name_1,
   ]
 }
 
@@ -391,9 +390,9 @@ resource "google_compute_router_interface" "router_2_interface_0" {
 
   ip_range = "${var.ip_address_3}/${var.mask_length}"
 
-     depends_on = [
-google_compute_vpn_tunnel.vpn_tunnel_gw2_if0,
-google_compute_router.router_name_2,
+  depends_on = [
+    google_compute_vpn_tunnel.vpn_tunnel_gw2_if0,
+    google_compute_router.router_name_2,
   ]
 
 }
@@ -414,9 +413,9 @@ resource "google_compute_router_peer" "router_2_peer_gw2_if0" {
   }
   advertise_mode = "CUSTOM"
 
-     depends_on = [
-google_compute_router_interface.router_2_interface_0,
-google_compute_router.router_name_2,
+  depends_on = [
+    google_compute_router_interface.router_2_interface_0,
+    google_compute_router.router_name_2,
   ]
 }
 
@@ -432,9 +431,9 @@ resource "google_compute_router_interface" "router_2_interface_1" {
   vpn_tunnel = google_compute_vpn_tunnel.vpn_tunnel_gw2_if1.name
 
   ip_range = "${var.ip_address_4}/${var.mask_length}"
-     depends_on = [
-google_compute_router.router_name_2,
-google_compute_vpn_tunnel.vpn_tunnel_gw2_if1,
+  depends_on = [
+    google_compute_router.router_name_2,
+    google_compute_vpn_tunnel.vpn_tunnel_gw2_if1,
   ]
 
 }
@@ -453,8 +452,8 @@ resource "google_compute_router_peer" "router_2_peer_gw2_if1" {
     range = var.gke_subnetwork_master_cidr_range
   }
   advertise_mode = "CUSTOM"
-     depends_on = [
-google_compute_router_interface.router_2_interface_1,
-google_compute_router.router_name_2,
+  depends_on = [
+    google_compute_router_interface.router_2_interface_1,
+    google_compute_router.router_name_2,
   ]
 }

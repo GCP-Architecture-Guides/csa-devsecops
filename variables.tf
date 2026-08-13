@@ -495,9 +495,3 @@ variable "attestor_name" {
   description = "attestor name"
   default     = "hello-world-attestor"
 }
-
-
-
-
-
-

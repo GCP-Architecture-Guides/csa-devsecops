@@ -183,7 +183,7 @@ resource "google_dns_record_set" "dns_record_a_pkg_dev" {
 
 
 resource "google_dns_managed_zone" "psc_cloud_dns" {
-    count      = var.workstation_private_config == false ? 0 : 1
+  count       = var.workstation_private_config == false ? 0 : 1
   name        = "private-workstation-cluster-zone"
   dns_name    = "${google_workstations_workstation_cluster.workstation_cluster.private_cluster_config[0].cluster_hostname}."
   description = "Private Workstation"
@@ -202,15 +202,15 @@ resource "google_dns_managed_zone" "psc_cloud_dns" {
 
 
 resource "google_dns_record_set" "psc_dns_record_cname" {
-    count      = var.workstation_private_config == false ? 0 : 1
+  count        = var.workstation_private_config == false ? 0 : 1
   name         = "*.${google_dns_managed_zone.psc_cloud_dns[count.index].dns_name}"
   managed_zone = google_dns_managed_zone.psc_cloud_dns[count.index].name
   type         = "A"
   ttl          = 300
   project      = google_project.app_dev_project.project_id
   rrdatas      = ["${google_compute_address.ipsec-interconnect-address[count.index].address}"]
-  depends_on   = [
+  depends_on = [
     google_dns_managed_zone.psc_cloud_dns,
     google_compute_address.ipsec-interconnect-address,
-    ]
+  ]
 }

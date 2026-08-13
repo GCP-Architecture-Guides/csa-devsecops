@@ -18,12 +18,12 @@
 
 
 output "step1_follow_the_steps_to_register_service_account_for_Assured_OSS" {
-  value     = module.app-dev._step1_follow_the_steps_to_register_service_account_for_OSS
+  value = module.app-dev._step1_follow_the_steps_to_register_service_account_for_OSS
 }
 
 
 output "step2_register_the_service_account_for_Assured_OSS" {
-  value     = module.app-dev._step2_register_the_service_account_for_OSS
+  value = module.app-dev._step2_register_the_service_account_for_OSS
 }
 
 
